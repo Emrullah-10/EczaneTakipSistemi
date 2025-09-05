@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Eczane Takip</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/IlacTakip.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        /* Layout adjustments for sidebar compatibility */
+        .main-layout {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .admin-layout {
+            margin-left: 280px;
+        }
+        
+        .non-admin-layout {
+            margin-left: 0;
+        }
+        
+        @@media (max-width: 768px) {
+            .admin-layout {
+                margin-left: 0;
+            }
+        }
+        
+        /* Header adjustments */
+        .main-header {
+            position: relative;
+            z-index: 500;
+            background: var(--primary-bg) !important;
+        }
+        
+        /* Footer adjustments */
+        .main-footer {
+            background: var(--secondary-bg);
+            color: #ffffff;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: auto;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .admin-layout .main-footer {
+            margin-left: -280px;
+        }
+        
+        @@media (max-width: 768px) {
+            .admin-layout .main-footer {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body class="main-layout">
+    <header class="main-header">
+        <nav class="navbar navbar-dark">
+            <div class="container-fluid">
+                <!-- Centered Brand -->
+                <div class="w-100 d-flex justify-content-center">
+                    <a class="navbar-brand animate-float" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-hospital me-2"></i>Eczane Takip
+                    </a>
+                </div>
+                
+                <!-- Right side menu for non-admin users -->
+                @if (Context.Session.GetString("AdminId") == null)
+                {
+                    <div class="position-absolute end-0 me-3">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Login">
+                            <i class="fas fa-sign-in-alt me-1"></i>Giriş Yap
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <!-- Mobile Menu Toggle -->
+                    <button class="mobile-toggle" id="mobileToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    
+                    <!-- Sidebar Overlay -->
+                    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="@(Context.Session.GetString("AdminId") != null ? "admin-layout" : "non-admin-layout")">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+        
+        <footer class="main-footer">
+            <div class="container-fluid">
+                <p class="mb-0">&copy; 2024 - Eczane Takip Sistemi</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Custom Animations Script -->
+    <script>
+        // Add smooth scroll behavior and entrance animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add fade-in animation to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.classList.add('animate-fadeInUp');
+            });
+
+            // Add floating animation to icons
+            const icons = document.querySelectorAll('.fa-2x, .fa-3x');
+            icons.forEach(icon => {
+                icon.classList.add('animate-float');
+            });
+
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Add hover effects to table rows
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.01)';
+                    this.style.transition = 'all 0.2s ease';
+                });
+                row.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+            
+            // Mobile Menu Toggle
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileToggle && sidebarOverlay && sidebar) {
+                mobileToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    sidebarOverlay.classList.toggle('active');
+                });
+                
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                });
+                
+                // Close menu when clicking sidebar links
+                const menuLinks = sidebar.querySelectorAll('.menu-link');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        sidebar.classList.remove('active');
+                        sidebarOverlay.classList.remove('active');
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

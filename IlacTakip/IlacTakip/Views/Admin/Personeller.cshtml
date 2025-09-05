@@ -1,0 +1,641 @@
+@model List<IlacTakip.Models.Personel>
+
+@{
+    ViewData["Title"] = "Personel Yönetimi";
+}
+
+<style>
+/* Dashboard Content Layout - Same as Index */
+.dashboard-content {
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+@@media (max-width: 768px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+    
+    .sidebar {
+        left: -280px;
+    }
+}
+
+/* Compact Page Header */
+.page-header {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px var(--shadow-light);
+    margin-bottom: 2rem;
+}
+
+.page-header .card-body {
+    padding: 1.5rem !important;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* Content Container */
+.content-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Table Responsive */
+.table-container {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 15px var(--shadow-light);
+    overflow: hidden;
+}
+
+.table-container .card-header {
+    padding: 1rem 1.5rem;
+    background: var(--secondary-bg);
+    color: #ffffff;
+}
+
+.table-container .card-body {
+    padding: 0;
+}
+
+/* Responsive Table */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow-light);
+}
+
+.table {
+    margin-bottom: 0;
+    background: #ffffff;
+}
+
+/* Statistics Cards Responsive */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.stat-mini-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 20px var(--shadow-light);
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+}
+
+.stat-mini-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px var(--shadow-medium);
+}
+
+.stat-mini-card.primary { border-left-color: #333333; }
+.stat-mini-card.success { border-left-color: #28a745; }
+.stat-mini-card.danger { border-left-color: #dc3545; }
+.stat-mini-card.warning { border-left-color: #ffc107; }
+
+.stat-mini-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-mini-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-mini-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Mobile Card View */
+@@media (max-width: 768px) {
+    .table-responsive {
+        display: none;
+    }
+    
+    .mobile-cards {
+        display: block;
+    }
+    
+    .mobile-card {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px var(--shadow-light);
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .mobile-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .mobile-card-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+    
+    .mobile-card-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .mobile-info-item {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.85rem;
+    }
+    
+    .mobile-info-label {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .mobile-info-value {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    
+    .mobile-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    
+    .btn-mobile {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+}
+
+@@media (min-width: 769px) {
+    .mobile-cards {
+        display: none;
+    }
+}
+
+/* Mobile Responsive */
+@@media (max-width: 576px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .stat-mini-card {
+        padding: 1rem;
+    }
+    
+    .stat-mini-icon {
+        font-size: 1.5rem;
+    }
+    
+    .stat-mini-value {
+        font-size: 1.2rem;
+    }
+}
+
+/* Personnel Avatar */
+.personnel-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+</style>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="@Url.Action("Index", "Home")" class="sidebar-brand">
+            <i class="fas fa-hospital animate-float"></i>
+            <span>Eczane Takip</span>
+        </a>
+    </div>
+    
+    <nav class="sidebar-menu">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li class="menu-item">
+                <a href="@Url.Action("Index", "Admin")" class="menu-link">
+                    <i class="fas fa-tachometer-alt menu-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("Ilaclar", "Admin")" class="menu-link">
+                    <i class="fas fa-pills menu-icon"></i>
+                    <span>İlaçlar</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("IlacEkle", "Admin")" class="menu-link">
+                    <i class="fas fa-plus-circle menu-icon"></i>
+                    <span>İlaç Ekle</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("Personeller", "Admin")" class="menu-link active">
+                    <i class="fas fa-users menu-icon"></i>
+                    <span>Personeller</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("PersonelEkle", "Admin")" class="menu-link">
+                    <i class="fas fa-user-plus menu-icon"></i>
+                    <span>Personel Ekle</span>
+                </a>
+            </li>
+            <li class="menu-item" style="margin-top: 2rem; border-top: 1px solid #444; padding-top: 1rem;">
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="menu-link" style="background: none; border: none; width: 100%; text-align: left;">
+                        <i class="fas fa-sign-out-alt menu-icon"></i>
+                        <span>Çıkış Yap</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between flex-column flex-md-row">
+                <div class="d-flex align-items-center mb-2 mb-md-0">
+                    <div class="animate-float me-3">
+                        <i class="fas fa-users fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h1 class="page-title mb-0">Personel Yönetimi</h1>
+                        <p class="page-subtitle mb-0">Eczane çalışanlarını yönetin</p>
+                    </div>
+                </div>
+                <div>
+                    <a href="@Url.Action("PersonelEkle", "Admin")" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Yeni Personel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <div class="table-container">
+            <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                <h6 class="m-0 fw-bold">
+                    <i class="fas fa-list me-2"></i>Personel Listesi
+                </h6>
+                <a href="@Url.Action("PersonelEkle")" class="btn btn-primary btn-sm">
+                    <i class="fas fa-user-plus me-1"></i>Yeni Personel Ekle
+                </a>
+            </div>
+            <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-user me-1"></i>Personel</th>
+                                        <th class="d-none d-md-table-cell"><i class="fas fa-phone me-1"></i>Telefon</th>
+                                        <th class="d-none d-lg-table-cell"><i class="fas fa-briefcase me-1"></i>Pozisyon</th>
+                                        <th class="d-none d-md-table-cell"><i class="fas fa-money-bill me-1"></i>Maaş</th>
+                                        <th class="d-none d-xl-table-cell"><i class="fas fa-calendar-alt me-1"></i>İşe Başlama</th>
+                                        <th><i class="fas fa-toggle-on me-1"></i>Durum</th>
+                                        <th><i class="fas fa-cogs me-1"></i>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var personel in Model)
+                                    {
+                                        <tr class="animate-fadeInUp">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-2">
+                                                        <div class="personnel-avatar">
+                                                            @personel.Ad.Substring(0, 1).ToUpper()
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <strong class="text-primary">@personel.Ad @personel.Soyad</strong>
+                                                        <br><small class="text-muted">ID: @personel.Id</small>
+                                                        <!-- Mobile Info -->
+                                                        <div class="d-md-none">
+                                                            @if (!string.IsNullOrEmpty(personel.Telefon))
+                                                            {
+                                                                <br><small class="text-success">@personel.Telefon</small>
+                                                            }
+                                                            <br><small class="text-info">@personel.Maas.ToString("C")</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="d-none d-md-table-cell">
+                                                @if (!string.IsNullOrEmpty(personel.Telefon))
+                                                {
+                                                    <a href="tel:@personel.Telefon" class="text-decoration-none">
+                                                        <i class="fas fa-phone me-1 text-success"></i>
+                                                        @personel.Telefon
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-minus me-1"></i>
+                                                        Belirtilmemiş
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="d-none d-lg-table-cell">
+                                                @if (!string.IsNullOrEmpty(personel.Pozisyon))
+                                                {
+                                                    <span class="badge bg-info">
+                                                        <i class="fas fa-briefcase me-1"></i>
+                                                        @personel.Pozisyon
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-question-circle me-1"></i>
+                                                        Belirtilmemiş
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="d-none d-md-table-cell">
+                                                <span class="fw-bold text-success">
+                                                    <i class="fas fa-lira-sign me-1"></i>
+                                                    @personel.Maas.ToString("C")
+                                                </span>
+                                            </td>
+                                            <td class="d-none d-xl-table-cell">
+                                                @if (personel.IseBaslamaTarihi.HasValue)
+                                                {
+                                                    var gunSayisi = (DateTime.Now - personel.IseBaslamaTarihi.Value).Days;
+                                                    <div>
+                                                        <span class="text-primary">
+                                                            <i class="fas fa-calendar-check me-1"></i>
+                                                            @personel.IseBaslamaTarihi.Value.ToString("dd.MM.yyyy")
+                                                        </span>
+                                                        <br>
+                                                        <small class="text-muted">
+                                                            @(gunSayisi / 365) yıl @((gunSayisi % 365) / 30) ay
+                                                        </small>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-question-circle me-1"></i>
+                                                        Belirtilmemiş
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (personel.AktifMi)
+                                                {
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check-circle me-1"></i>Aktif
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">
+                                                        <i class="fas fa-times-circle me-1"></i>Pasif
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm" 
+                                                        onclick="confirmDelete(@personel.Id, '@personel.Ad @personel.Soyad')">
+                                                    <i class="fas fa-trash"></i>
+                                                    <span class="d-none d-md-inline ms-1">Sil</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Cards View -->
+                        <div class="mobile-cards">
+                            @foreach (var personel in Model)
+                            {
+                                <div class="mobile-card">
+                                    <div class="mobile-card-header">
+                                        <div class="mobile-card-title">
+                                            <div class="personnel-avatar me-2">
+                                                @personel.Ad.Substring(0, 1).ToUpper()@personel.Soyad.Substring(0, 1).ToUpper()
+                                            </div>
+                                            @personel.Ad @personel.Soyad
+                                        </div>
+                                        <div class="mobile-card-actions">
+                                            @if (personel.AktifMi)
+                                            {
+                                                <span class="badge bg-success">Aktif</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Pasif</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mobile-card-info">
+                                        @if (!string.IsNullOrEmpty(personel.Pozisyon))
+                                        {
+                                            <div class="mobile-info-item">
+                                                <div class="mobile-info-label">Pozisyon</div>
+                                                <div class="mobile-info-value">@personel.Pozisyon</div>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(personel.Telefon))
+                                        {
+                                            <div class="mobile-info-item">
+                                                <div class="mobile-info-label">Telefon</div>
+                                                <div class="mobile-info-value">@personel.Telefon</div>
+                                            </div>
+                                        }
+                                        @if (personel.Maas > 0)
+                                        {
+                                            <div class="mobile-info-item">
+                                                <div class="mobile-info-label">Maaş</div>
+                                                <div class="mobile-info-value text-success fw-bold">@personel.Maas.ToString("C")</div>
+                                            </div>
+                                        }
+                                        @if (personel.IseBaslamaTarihi.HasValue)
+                                        {
+                                            <div class="mobile-info-item">
+                                                <div class="mobile-info-label">İşe Başlama</div>
+                                                <div class="mobile-info-value">
+                                                    @personel.IseBaslamaTarihi.Value.ToString("dd.MM.yyyy")
+                                                    @{
+                                                        var gunSayisi = (DateTime.Now - personel.IseBaslamaTarihi.Value).Days;
+                                                    }
+                                                    <br><small class="text-muted">@(gunSayisi / 365) yıl deneyim</small>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    
+                                    <div class="mobile-card-actions mt-2">
+                                        <a href="@Url.Action("PersonelDuzenle", new { id = personel.Id })" 
+                                           class="btn btn-primary btn-mobile">
+                                            <i class="fas fa-edit"></i> Düzenle
+                                        </a>
+                                        <button type="button" class="btn btn-danger btn-mobile" 
+                                                onclick="confirmDelete(@personel.Id, '@personel.Ad @personel.Soyad')">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Statistics Cards -->
+                        <div class="stats-row">
+                            <div class="stat-mini-card primary">
+                                <div class="stat-mini-icon text-primary">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-mini-value text-primary">@Model.Count</div>
+                                <div class="stat-mini-label">Toplam Personel</div>
+                            </div>
+                            <div class="stat-mini-card success">
+                                <div class="stat-mini-icon text-success">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                                <div class="stat-mini-value text-success">@Model.Count(p => p.AktifMi)</div>
+                                <div class="stat-mini-label">Aktif Personel</div>
+                            </div>
+                            <div class="stat-mini-card danger">
+                                <div class="stat-mini-icon text-danger">
+                                    <i class="fas fa-user-times"></i>
+                                </div>
+                                <div class="stat-mini-value text-danger">@Model.Count(p => !p.AktifMi)</div>
+                                <div class="stat-mini-label">Pasif Personel</div>
+                            </div>
+                            <div class="stat-mini-card warning">
+                                <div class="stat-mini-icon text-warning">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="stat-mini-value text-warning">@Model.Where(p => p.AktifMi).Sum(p => p.Maas).ToString("C")</div>
+                                <div class="stat-mini-label">Toplam Maaş Gideri</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Empty State -->
+                        <div class="text-center py-5">
+                            <div class="animate-float mb-4">
+                                <i class="fas fa-users fa-5x text-muted"></i>
+                            </div>
+                            <h4 class="text-muted mb-3">Henüz personel eklenmemiş</h4>
+                            <p class="text-muted mb-4">İlk personelini ekleyerek ekip yönetimine başlayın.</p>
+                            <a href="@Url.Action("PersonelEkle")" class="btn btn-primary btn-lg">
+                                <i class="fas fa-user-plus me-2"></i>İlk Personeli Ekle
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Personeli Sil
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-user-times fa-3x text-danger animate-float"></i>
+                </div>
+                <p class="text-center">Bu personeli silmek istediğinizden emin misiniz?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong id="personelName"></strong> kalıcı olarak silinecektir.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>İptal
+                </button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(id, name) {
+    document.getElementById('personelName').textContent = name;
+    document.getElementById('deleteForm').action = '@Url.Action("PersonelSil")/' + id;
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+// Add entrance animations
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 0.1}s`;
+    });
+});
+</script> 

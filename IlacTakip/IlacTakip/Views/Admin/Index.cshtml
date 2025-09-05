@@ -1,0 +1,447 @@
+@model IlacTakip.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<style>
+/* Dashboard Sidebar & Layout Styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--primary-bg);
+    transition: left 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+    box-shadow: 2px 0 15px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+    padding: 2rem;
+    border-bottom: 1px solid #444;
+    text-align: center;
+}
+
+.sidebar-brand {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.sidebar-brand:hover {
+    color: #f0f0f0;
+}
+
+.sidebar-menu {
+    padding: 1rem 0;
+}
+
+.menu-item {
+    list-style: none;
+    margin: 0;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    color: #cccccc;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.menu-link:hover {
+    background: rgba(255,255,255,0.1);
+    color: #ffffff;
+    border-left-color: #ffffff;
+    transform: translateX(5px);
+}
+
+.menu-link.active {
+    background: rgba(255,255,255,0.15);
+    color: #ffffff;
+    border-left-color: #ffffff;
+}
+
+.menu-icon {
+    width: 20px;
+    margin-right: 1rem;
+    text-align: center;
+}
+
+.dashboard-content {
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+@@media (max-width: 768px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+    
+    .sidebar {
+        left: -280px;
+    }
+}
+
+/* Dashboard Cards Enhancement */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px var(--shadow-light);
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px var(--shadow-medium);
+}
+
+.stat-card.primary { border-left-color: #333333; }
+.stat-card.success { border-left-color: #28a745; }
+.stat-card.info { border-left-color: #17a2b8; }
+.stat-card.warning { border-left-color: #ffc107; }
+
+.stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.stat-icon.primary { background: #333333; }
+.stat-icon.success { background: #28a745; }
+.stat-icon.info { background: #17a2b8; }
+.stat-icon.warning { background: #ffc107; color: #000000; }
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Quick Actions Grid */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.quick-action-btn {
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quick-action-btn:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px var(--shadow-medium);
+    color: var(--text-primary);
+}
+
+.quick-action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.quick-action-title {
+    font-weight: 600;
+    font-size: 1rem;
+}
+</style>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="@Url.Action("Index", "Home")" class="sidebar-brand">
+            <i class="fas fa-hospital animate-float"></i>
+            <span>Eczane Takip</span>
+        </a>
+    </div>
+    
+    <nav class="sidebar-menu">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li class="menu-item">
+                <a href="@Url.Action("Index", "Admin")" class="menu-link active">
+                    <i class="fas fa-tachometer-alt menu-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("Ilaclar", "Admin")" class="menu-link">
+                    <i class="fas fa-pills menu-icon"></i>
+                    <span>İlaçlar</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("IlacEkle", "Admin")" class="menu-link">
+                    <i class="fas fa-plus-circle menu-icon"></i>
+                    <span>İlaç Ekle</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("Personeller", "Admin")" class="menu-link">
+                    <i class="fas fa-users menu-icon"></i>
+                    <span>Personeller</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("PersonelEkle", "Admin")" class="menu-link">
+                    <i class="fas fa-user-plus menu-icon"></i>
+                    <span>Personel Ekle</span>
+                </a>
+            </li>
+            <li class="menu-item" style="margin-top: 2rem; border-top: 1px solid #444; padding-top: 1rem;">
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="menu-link" style="background: none; border: none; width: 100%; text-align: left;">
+                        <i class="fas fa-sign-out-alt menu-icon"></i>
+                        <span>Çıkış Yap</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-content">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card glass-effect">
+                <div class="card-body text-center py-4">
+                    <div class="animate-float">
+                        <i class="fas fa-tachometer-alt fa-3x text-primary mb-3"></i>
+                    </div>
+                    <h1 class="display-5 fw-bold text-primary mb-2">Admin Dashboard</h1>
+                    <p class="lead text-muted">Eczane Yönetim Sistemi</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <!-- İlaç Sayısı -->
+        <div class="stat-card primary">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-value">@Model.ToplamIlac</div>
+                    <div class="stat-label">Toplam İlaç</div>
+                </div>
+                <div class="stat-icon primary">
+                    <i class="fas fa-pills"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personel Sayısı -->
+        <div class="stat-card success">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-value">@Model.ToplamPersonel</div>
+                    <div class="stat-label">Aktif Personel</div>
+                </div>
+                <div class="stat-icon success">
+                    <i class="fas fa-users"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maaş Gideri -->
+        <div class="stat-card info">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-value">@Model.ToplamMaasGideri.ToString("C")</div>
+                    <div class="stat-label">Aylık Maaş Gideri</div>
+                </div>
+                <div class="stat-icon info">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- İlaç Değeri -->
+        <div class="stat-card warning">
+            <div class="stat-header">
+                <div>
+                    <div class="stat-value">@Model.ToplamIlacDegeri.ToString("C")</div>
+                    <div class="stat-label">Toplam İlaç Değeri</div>
+                </div>
+                <div class="stat-icon warning">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerts Row -->
+    <div class="row g-4 mb-4">
+        <!-- Stok Uyarıları -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6 class="m-0 fw-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Stok Uyarıları
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.StokUyarisiIlaclar.Any())
+                    {
+                        @foreach (var ilac in Model.StokUyarisiIlaclar)
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                <strong>@ilac.Ad</strong> - Stok: @ilac.StokMiktari (Kritik seviyede)
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3 animate-float"></i>
+                            <p class="text-muted">Stok uyarısı gereken ilaç bulunmuyor.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Son Kullanma Uyarıları -->
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h6 class="m-0 fw-bold">
+                        <i class="fas fa-calendar-times me-2"></i>Son Kullanma Uyarıları
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.SonKullanmaUyarisiIlaclar.Any())
+                    {
+                        @foreach (var ilac in Model.SonKullanmaUyarisiIlaclar)
+                        {
+                            <div class="alert alert-warning" role="alert">
+                                <strong>@ilac.Ad</strong> - Son Kullanma: @ilac.SonKullanmaTarihi?.ToString("dd.MM.yyyy")
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3 animate-float"></i>
+                            <p class="text-muted">Son kullanma tarihi yaklaşan ilaç bulunmuyor.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card">
+        <div class="card-header">
+            <h6 class="m-0 fw-bold">
+                <i class="fas fa-bolt me-2"></i>Hızlı İşlemler
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="quick-actions">
+                <a href="@Url.Action("IlacEkle")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="quick-action-title">Yeni İlaç Ekle</div>
+                </a>
+                <a href="@Url.Action("PersonelEkle")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div class="quick-action-title">Yeni Personel Ekle</div>
+                </a>
+                <a href="@Url.Action("Ilaclar")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <div class="quick-action-title">İlaçları Görüntüle</div>
+                </a>
+                <a href="@Url.Action("Personeller")" class="quick-action-btn">
+                    <div class="quick-action-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="quick-action-title">Personelleri Görüntüle</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add entrance animations
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.classList.add('animate-fadeInUp');
+    });
+
+    // Add floating animation to icons
+    const icons = document.querySelectorAll('.fa-2x, .fa-3x');
+    icons.forEach(icon => {
+        icon.classList.add('animate-float');
+    });
+});
+</script>

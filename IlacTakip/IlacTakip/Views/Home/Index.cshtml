@@ -1,0 +1,274 @@
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="home-container">
+    <!-- Hero Section -->
+    <section class="hero-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="hero-title mb-4">
+                            <i class="fas fa-pills text-primary me-3"></i>
+                            İlaç Takip Sistemi
+                        </h1>
+                        <p class="hero-description mb-4">
+                            Modern ve güvenli ilaç yönetim sistemi. Stok takibi, personel yönetimi ve sipariş kontrolü tek platformda.
+                        </p>
+                        
+                        <div class="hero-features mb-4">
+                            <div class="feature-item mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Akıllı Stok Yönetimi</span>
+                            </div>
+                            <div class="feature-item mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Personel Takip Sistemi</span>
+                            </div>
+                            <div class="feature-item mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <span>Otomatik Raporlama</span>
+                            </div>
+                        </div>
+                        
+                        <div class="hero-buttons">
+                            <a href="@Url.Action("Login", "Account")" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-sign-in-alt me-2"></i>Admin Girişi
+                            </a>
+                            <button class="btn btn-outline-primary btn-lg" onclick="scrollToFeatures()">
+                                <i class="fas fa-info-circle me-2"></i>Özellikler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image text-center">
+                        <div class="dashboard-mockup">
+                            <div class="mockup-card">
+                                <div class="mockup-header">
+                                    <i class="fas fa-chart-bar me-2"></i>Dashboard
+                                </div>
+                                <div class="mockup-content">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="stat-box">
+                                                <div class="stat-number">156</div>
+                                                <div class="stat-label">İlaç</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="stat-box">
+                                                <div class="stat-number">12</div>
+                                                <div class="stat-label">Personel</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section py-5 bg-light">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Sistem Özellikleri</h2>
+                <p class="section-subtitle text-muted">İlaç takip sisteminin sunduğu güçlü özellikler</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-pills fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="feature-title">İlaç Yönetimi</h5>
+                        <p class="feature-text">
+                            Barkod takibi, son kullanma tarihi uyarıları ve akıllı stok kontrolü.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-users fa-3x text-success"></i>
+                        </div>
+                        <h5 class="feature-title">Personel Takibi</h5>
+                        <p class="feature-text">
+                            Personel bilgileri, maaş hesaplaması ve çalışma durumu yönetimi.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="feature-card text-center p-4">
+                        <div class="feature-icon mb-3">
+                            <i class="fas fa-chart-line fa-3x text-warning"></i>
+                        </div>
+                        <h5 class="feature-title">Raporlama</h5>
+                        <p class="feature-text">
+                            Detaylı raporlar ve analizlerle performansınızı takip edin.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="mb-3">Hemen Başlayın!</h2>
+            <p class="lead mb-4">Modern ilaç takip sistemi ile işlerinizi kolaylaştırın.</p>
+            <a href="@Url.Action("Login", "Account")" class="btn btn-light btn-lg">
+                <i class="fas fa-arrow-right me-2"></i>Admin Paneline Git
+            </a>
+        </div>
+    </section>
+</div>
+
+<style>
+    .home-container {
+        width: 100%;
+        overflow-x: hidden;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .hero-description {
+        font-size: 1.2rem;
+        color: #6c757d;
+        line-height: 1.6;
+    }
+
+    .feature-item {
+        font-size: 1.1rem;
+        color: #495057;
+    }
+
+    .dashboard-mockup {
+        max-width: 350px;
+        margin: 0 auto;
+    }
+
+    .mockup-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transform: rotate(3deg);
+        transition: transform 0.3s ease;
+    }
+
+    .mockup-card:hover {
+        transform: rotate(0deg) scale(1.05);
+    }
+
+    .mockup-header {
+        background: #007bff;
+        color: white;
+        padding: 1rem;
+        font-weight: 600;
+    }
+
+    .mockup-content {
+        padding: 1.5rem;
+    }
+
+    .stat-box {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+        height: 100%;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .feature-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .feature-text {
+        color: #6c757d;
+        line-height: 1.6;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.2rem;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+        }
+        
+        .mockup-card {
+            transform: none;
+        }
+        
+        .hero-buttons .btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+
+<script>
+    function scrollToFeatures() {
+        document.getElementById('features').scrollIntoView({
+            behavior: 'smooth'
+        });
+    }
+</script>

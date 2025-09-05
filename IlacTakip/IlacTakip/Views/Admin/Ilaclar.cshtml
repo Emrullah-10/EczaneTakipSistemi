@@ -1,0 +1,637 @@
+@model List<IlacTakip.Models.Ilac>
+
+@{
+    ViewData["Title"] = "İlaç Yönetimi";
+}
+
+<style>
+/* Dashboard Content Layout - Same as Index */
+.dashboard-content {
+    padding: 2rem;
+    min-height: 100vh;
+}
+
+@@media (max-width: 768px) {
+    .dashboard-content {
+        padding: 1rem;
+    }
+    
+    .sidebar {
+        left: -280px;
+    }
+}
+
+/* Compact Page Header */
+.page-header {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px var(--shadow-light);
+    margin-bottom: 2rem;
+}
+
+.page-header .card-body {
+    padding: 1.5rem !important;
+}
+
+.page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
+/* Content Container */
+.content-container {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Table Responsive */
+.table-container {
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 15px var(--shadow-light);
+    overflow: hidden;
+}
+
+.table-container .card-header {
+    padding: 1rem 1.5rem;
+    background: var(--secondary-bg);
+    color: #ffffff;
+}
+
+.table-container .card-body {
+    padding: 0;
+}
+
+/* Responsive Table */
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow-light);
+}
+
+.table {
+    margin-bottom: 0;
+    background: #ffffff;
+}
+
+/* Statistics Cards Responsive */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.stat-mini-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 20px var(--shadow-light);
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+}
+
+.stat-mini-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px var(--shadow-medium);
+}
+
+.stat-mini-card.primary { border-left-color: #333333; }
+.stat-mini-card.success { border-left-color: #28a745; }
+.stat-mini-card.warning { border-left-color: #ffc107; }
+.stat-mini-card.info { border-left-color: #17a2b8; }
+
+.stat-mini-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-mini-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.stat-mini-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Mobile Card View */
+@@media (max-width: 768px) {
+    .table-responsive {
+        display: none;
+    }
+    
+    .mobile-cards {
+        display: block;
+    }
+    
+    .mobile-card {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px var(--shadow-light);
+        border-left: 4px solid var(--accent-color);
+    }
+    
+    .mobile-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .mobile-card-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 1rem;
+    }
+    
+    .mobile-card-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .mobile-info-item {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.85rem;
+    }
+    
+    .mobile-info-label {
+        color: var(--text-muted);
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .mobile-info-value {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+    
+    .mobile-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    
+    .btn-mobile {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+}
+
+@@media (min-width: 769px) {
+    .mobile-cards {
+        display: none;
+    }
+}
+
+/* Mobile Responsive */
+@@media (max-width: 576px) {
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .stat-mini-card {
+        padding: 1rem;
+    }
+    
+    .stat-mini-icon {
+        font-size: 1.5rem;
+    }
+    
+    .stat-mini-value {
+        font-size: 1.2rem;
+    }
+    
+    .mobile-card-info {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="@Url.Action("Index", "Home")" class="sidebar-brand">
+            <i class="fas fa-hospital animate-float"></i>
+            <span>Eczane Takip</span>
+        </a>
+    </div>
+    
+    <nav class="sidebar-menu">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li class="menu-item">
+                <a href="@Url.Action("Index", "Admin")" class="menu-link">
+                    <i class="fas fa-tachometer-alt menu-icon"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("Ilaclar", "Admin")" class="menu-link active">
+                    <i class="fas fa-pills menu-icon"></i>
+                    <span>İlaçlar</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("IlacEkle", "Admin")" class="menu-link">
+                    <i class="fas fa-plus-circle menu-icon"></i>
+                    <span>İlaç Ekle</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("Personeller", "Admin")" class="menu-link">
+                    <i class="fas fa-users menu-icon"></i>
+                    <span>Personeller</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="@Url.Action("PersonelEkle", "Admin")" class="menu-link">
+                    <i class="fas fa-user-plus menu-icon"></i>
+                    <span>Personel Ekle</span>
+                </a>
+            </li>
+            <li class="menu-item" style="margin-top: 2rem; border-top: 1px solid #444; padding-top: 1rem;">
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="menu-link" style="background: none; border: none; width: 100%; text-align: left;">
+                        <i class="fas fa-sign-out-alt menu-icon"></i>
+                        <span>Çıkış Yap</span>
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Main Content -->
+<div class="dashboard-content">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between flex-column flex-md-row">
+                <div class="d-flex align-items-center mb-2 mb-md-0">
+                    <div class="animate-float me-3">
+                        <i class="fas fa-pills fa-2x text-primary"></i>
+                    </div>
+                    <div>
+                        <h1 class="page-title mb-0">İlaç Yönetimi</h1>
+                        <p class="page-subtitle mb-0">Eczane ilaç stoklarını yönetin</p>
+                    </div>
+                </div>
+                <div>
+                    <a href="@Url.Action("IlacEkle", "Admin")" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Yeni İlaç
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-container">
+        <div class="table-container">
+            <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                <h6 class="m-0 fw-bold">
+                    <i class="fas fa-list me-2"></i>İlaç Listesi
+                </h6>
+                <a href="@Url.Action("IlacEkle")" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Yeni İlaç Ekle
+                </a>
+            </div>
+            <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i>@TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th><i class="fas fa-prescription-bottle me-1"></i>İlaç Adı</th>
+                                        <th class="d-none d-md-table-cell"><i class="fas fa-money-bill me-1"></i>Fiyat</th>
+                                        <th><i class="fas fa-boxes me-1"></i>Stok</th>
+                                        <th class="d-none d-lg-table-cell"><i class="fas fa-barcode me-1"></i>Barkod</th>
+                                        <th class="d-none d-xl-table-cell"><i class="fas fa-calendar-times me-1"></i>Son Kullanma</th>
+                                        <th class="d-none d-xl-table-cell"><i class="fas fa-calendar-plus me-1"></i>Eklenme Tarihi</th>
+                                        <th><i class="fas fa-cogs me-1"></i>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ilac in Model)
+                                    {
+                                        <tr class="animate-fadeInUp">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-2">
+                                                        <i class="fas fa-pills fa-lg text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <strong class="text-primary">@ilac.Ad</strong>
+                                                        @if (!string.IsNullOrEmpty(ilac.Aciklama))
+                                                        {
+                                                            <br><small class="text-muted d-none d-md-block">@ilac.Aciklama</small>
+                                                        }
+                                                        <!-- Mobile Info -->
+                                                        <div class="d-md-none">
+                                                            <small class="text-success fw-bold">@ilac.Fiyat.ToString("C")</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="d-none d-md-table-cell">
+                                                <span class="fw-bold text-success">@ilac.Fiyat.ToString("C")</span>
+                                            </td>
+                                            <td>
+                                                @if (ilac.StokMiktari < 10)
+                                                {
+                                                    <span class="badge bg-danger">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>@ilac.StokMiktari
+                                                    </span>
+                                                }
+                                                else if (ilac.StokMiktari < 50)
+                                                {
+                                                    <span class="badge bg-warning">
+                                                        <i class="fas fa-exclamation me-1"></i>@ilac.StokMiktari
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">
+                                                        <i class="fas fa-check me-1"></i>@ilac.StokMiktari
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="d-none d-lg-table-cell">
+                                                @if (!string.IsNullOrEmpty(ilac.BarkodNumarasi))
+                                                {
+                                                    <code class="text-muted">@ilac.BarkodNumarasi</code>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td class="d-none d-xl-table-cell">
+                                                @if (ilac.SonKullanmaTarihi.HasValue)
+                                                {
+                                                    var tarih = ilac.SonKullanmaTarihi.Value;
+                                                    var gunKaldi = (tarih - DateTime.Now).Days;
+                                                    
+                                                    if (gunKaldi < 0)
+                                                    {
+                                                        <span class="text-danger fw-bold">
+                                                            <i class="fas fa-times-circle me-1"></i>
+                                                            @tarih.ToString("dd.MM.yyyy")
+                                                            <br><small>(Süresi geçmiş)</small>
+                                                        </span>
+                                                    }
+                                                    else if (gunKaldi < 30)
+                                                    {
+                                                        <span class="text-warning fw-bold">
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            @tarih.ToString("dd.MM.yyyy")
+                                                            <br><small>(@gunKaldi gün kaldı)</small>
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-success">
+                                                            <i class="fas fa-check-circle me-1"></i>
+                                                            @tarih.ToString("dd.MM.yyyy")
+                                                        </span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-question-circle me-1"></i>
+                                                        Belirtilmemiş
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="d-none d-xl-table-cell">
+                                                <span class="text-muted">@ilac.OlusturmaTarihi.ToString("dd.MM.yyyy")</span>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger btn-sm" 
+                                                        onclick="confirmDelete(@ilac.Id, '@ilac.Ad')">
+                                                    <i class="fas fa-trash"></i>
+                                                    <span class="d-none d-md-inline ms-1">Sil</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Cards View -->
+                        <div class="mobile-cards">
+                            @foreach (var ilac in Model)
+                            {
+                                <div class="mobile-card">
+                                    <div class="mobile-card-header">
+                                        <div class="mobile-card-title">
+                                            <i class="fas fa-pills me-2 text-primary"></i>@ilac.Ad
+                                        </div>
+                                        <div class="mobile-card-actions">
+                                            <button type="button" class="btn btn-danger btn-mobile" 
+                                                    onclick="confirmDelete(@ilac.Id, '@ilac.Ad')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mobile-card-info">
+                                        <div class="mobile-info-item">
+                                            <div class="mobile-info-label">Fiyat</div>
+                                            <div class="mobile-info-value text-success fw-bold">@ilac.Fiyat.ToString("C")</div>
+                                        </div>
+                                        <div class="mobile-info-item">
+                                            <div class="mobile-info-label">Stok</div>
+                                            <div class="mobile-info-value">
+                                                @if (ilac.StokMiktari < 10)
+                                                {
+                                                    <span class="badge bg-danger">@ilac.StokMiktari</span>
+                                                }
+                                                else if (ilac.StokMiktari < 50)
+                                                {
+                                                    <span class="badge bg-warning">@ilac.StokMiktari</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success">@ilac.StokMiktari</span>
+                                                }
+                                            </div>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(ilac.BarkodNumarasi))
+                                        {
+                                            <div class="mobile-info-item">
+                                                <div class="mobile-info-label">Barkod</div>
+                                                <div class="mobile-info-value">
+                                                    <code class="text-muted">@ilac.BarkodNumarasi</code>
+                                                </div>
+                                            </div>
+                                        }
+                                        @if (ilac.SonKullanmaTarihi.HasValue)
+                                        {
+                                            <div class="mobile-info-item">
+                                                <div class="mobile-info-label">Son Kullanma</div>
+                                                <div class="mobile-info-value">
+                                                    @{
+                                                        var tarih = ilac.SonKullanmaTarihi.Value;
+                                                        var gunKaldi = (tarih - DateTime.Now).Days;
+                                                    }
+                                                    @if (gunKaldi < 0)
+                                                    {
+                                                        <span class="text-danger fw-bold">@tarih.ToString("dd.MM.yyyy")</span>
+                                                    }
+                                                    else if (gunKaldi < 30)
+                                                    {
+                                                        <span class="text-warning fw-bold">@tarih.ToString("dd.MM.yyyy")</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-success">@tarih.ToString("dd.MM.yyyy")</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    
+                                    @if (!string.IsNullOrEmpty(ilac.Aciklama))
+                                    {
+                                        <div class="mt-2">
+                                            <small class="text-muted">@ilac.Aciklama</small>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Statistics Cards -->
+                        <div class="stats-row">
+                            <div class="stat-mini-card primary">
+                                <div class="stat-mini-icon text-primary">
+                                    <i class="fas fa-pills"></i>
+                                </div>
+                                <div class="stat-mini-value text-primary">@Model.Count</div>
+                                <div class="stat-mini-label">Toplam İlaç</div>
+                            </div>
+                            <div class="stat-mini-card success">
+                                <div class="stat-mini-icon text-success">
+                                    <i class="fas fa-boxes"></i>
+                                </div>
+                                <div class="stat-mini-value text-success">@Model.Sum(i => i.StokMiktari)</div>
+                                <div class="stat-mini-label">Toplam Stok</div>
+                            </div>
+                            <div class="stat-mini-card warning">
+                                <div class="stat-mini-icon text-warning">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div class="stat-mini-value text-warning">@Model.Count(i => i.StokMiktari < 10)</div>
+                                <div class="stat-mini-label">Düşük Stok</div>
+                            </div>
+                            <div class="stat-mini-card info">
+                                <div class="stat-mini-icon text-info">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="stat-mini-value text-info">@Model.Where(i => i.Fiyat > 0).Sum(i => i.Fiyat * i.StokMiktari).ToString("C")</div>
+                                <div class="stat-mini-label">Toplam Değer</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Empty State -->
+                        <div class="text-center py-5">
+                            <div class="animate-float mb-4">
+                                <i class="fas fa-pills fa-5x text-muted"></i>
+                            </div>
+                            <h4 class="text-muted mb-3">Henüz ilaç eklenmemiş</h4>
+                            <p class="text-muted mb-4">İlk ilacınızı ekleyerek stok yönetimine başlayın.</p>
+                            <a href="@Url.Action("IlacEkle")" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus me-2"></i>İlk İlacı Ekle
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    İlacı Sil
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <i class="fas fa-trash fa-3x text-danger animate-float"></i>
+                </div>
+                <p class="text-center">Bu ilacı silmek istediğinizden emin misiniz?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong id="ilacName"></strong> kalıcı olarak silinecektir.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>İptal
+                </button>
+                <form id="deleteForm" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i>Sil
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(id, name) {
+    document.getElementById('ilacName').textContent = name;
+    document.getElementById('deleteForm').action = '@Url.Action("IlacSil")/' + id;
+    new bootstrap.Modal(document.getElementById('deleteModal')).show();
+}
+
+// Add entrance animations
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach((row, index) => {
+        row.style.animationDelay = `${index * 0.1}s`;
+    });
+});
+</script> 
